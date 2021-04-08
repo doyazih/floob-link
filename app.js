@@ -20,7 +20,7 @@ app.get('/meal/:mealId', (req, res) => {
         method: 'POST',
         headers: {
             'content-type': 'application/json',
-            authorization: `Bearer ${process.env.accessToken}`,
+            authorization: `Bearer ${process.env.ACCESS_TOKEN}`,
         },
         body: JSON.stringify({
             query: `{
@@ -84,6 +84,8 @@ app.get('/meal/:mealId', (req, res) => {
                     ogDescription: description,
                     ogImage: imageUrl,
                 });
+
+                console.log('Link preview html', html);
 
                 res.send(html);
             } catch (err) {
