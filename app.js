@@ -89,6 +89,8 @@ app.get('/meal/:mealId', (req, res) => {
 
                 res.send(html);
             } catch (err) {
+                console.error('link html error', err);
+
                 let html = Mustache.render(template, {
                     mealId: req.params.mealId,
                     link: `https://floob.co.kr/meal/${req.params.mealId}`,
