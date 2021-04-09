@@ -42,11 +42,15 @@ app.get('/meal/:mealId', (req, res) => {
     })
         .then((res) => res.json())
         .then((data) => {
-            let title = 'Floob: 식사기록 인 라이프';
-            let description =
+            const DEFAULT_TITLE = 'Floob: 식사기록 인 라이프';
+            const DEFAULT_DESCRIPTION =
                 'Floob에서 나만의 가치있는 식사 생활을 기록하고 공유해보세요.';
-            let imageUrl =
+            const DEFAULT_IMAGE_URL =
                 'https://floob.blob.core.windows.net/image/floob_og.jpg';
+
+            let title = DEFAULT_TITLE;
+            let description = DEFAULT_DESCRIPTION;
+            let imageUrl = DEFAULT_IMAGE_URL;
 
             try {
                 const meal = data.data.getMeal;
@@ -79,13 +83,13 @@ app.get('/meal/:mealId', (req, res) => {
 
                 let html = Mustache.render(template, {
                     mealId: req.params.mealId,
-                    link: `https://floob.co.kr/meal/${req.params.mealId}`,
+                    linkUrl: `https://floob.co.kr/meal/${req.params.mealId}`,
+                    title: title,
+                    description: description,
                     ogTitle: title,
                     ogDescription: description,
                     ogImage: imageUrl,
                 });
-
-                console.log('Link preview html', html);
 
                 res.send(html);
             } catch (err) {
@@ -93,12 +97,12 @@ app.get('/meal/:mealId', (req, res) => {
 
                 let html = Mustache.render(template, {
                     mealId: req.params.mealId,
-                    link: `https://floob.co.kr/meal/${req.params.mealId}`,
-                    ogTitle: 'Floob: 식사기록 인 라이프',
-                    ogDescription:
-                        'Floob에서 나만의 가치있는 식사 생활을 기록하고 공유해보세요.',
-                    ogImage:
-                        'https://floob.blob.core.windows.net/image/floob_og.jpg',
+                    linkUrl: `https://floob.co.kr/meal/${req.params.mealId}`,
+                    title: DEFAULT_TITLE,
+                    description: DEFAULT_DESCRIPTION,
+                    ogTitle: DEFAULT_TITLE,
+                    ogDescription: DEFAULT_DESCRIPTION,
+                    ogImage: DEFAULT_IMAGE_URL,
                 });
                 res.send(html);
             }
@@ -118,7 +122,7 @@ const convertShortenMealDateString = (mealedDate) => {
     } else if (mealType === 'dinner') {
         return `${moment(mealedDate).format('M월 D일')} • 저녁 식사`;
     } else {
-        return `${moment(mealedDate).format('M월 D일')} •  야식`;
+        return `${moment(mealedDate).format('M월 D일')} • 야식`;
     }
 };
 
