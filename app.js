@@ -91,6 +91,8 @@ app.get('/meal/:mealId', (req, res) => {
                     ogImage: imageUrl,
                 });
 
+                console.log('Link preview page html', html);
+
                 res.send(html);
             } catch (err) {
                 console.error('link html error', err);
