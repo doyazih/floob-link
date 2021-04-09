@@ -10,6 +10,20 @@ const app = express();
 
 const port = process.env.PORT || 3000;
 
+app.get('/apple-app-site-association', (req, res) => {
+    res.json({
+        applinks: {
+            apps: [],
+            details: [
+                {
+                    appID: 'J2DTWX5A4C.com.floob.app.ios',
+                    paths: ['/*'],
+                },
+            ],
+        },
+    });
+});
+
 app.get('/meal/:mealId', (req, res) => {
     let template = fs.readFileSync(
         path.join(__dirname, './template/meal.html'),
