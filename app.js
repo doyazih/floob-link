@@ -83,7 +83,8 @@ app.get('/meal/:mealId', (req, res) => {
 
                 let html = Mustache.render(template, {
                     mealId: req.params.mealId,
-                    linkUrl: `https://floob.co.kr/meal/${req.params.mealId}`,
+                    url: `https://floob.co.kr/meal/${req.params.mealId}`,
+                    linkUrl: `https://;link.floob.co.kr/meal/${req.params.mealId}`,
                     title: title,
                     description: description,
                     ogTitle: title,
@@ -99,7 +100,8 @@ app.get('/meal/:mealId', (req, res) => {
 
                 let html = Mustache.render(template, {
                     mealId: req.params.mealId,
-                    linkUrl: `https://floob.co.kr/meal/${req.params.mealId}`,
+                    url: `https://floob.co.kr/meal/${req.params.mealId}`,
+                    linkUrl: `https://link.floob.co.kr/meal/${req.params.mealId}`,
                     title: DEFAULT_TITLE,
                     description: DEFAULT_DESCRIPTION,
                     ogTitle: DEFAULT_TITLE,
