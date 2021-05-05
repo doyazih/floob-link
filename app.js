@@ -9,6 +9,7 @@ const express = require('express');
 const app = express();
 
 const port = process.env.PORT || 3000;
+const API_BASE_URL = process.env.API_BASE_URL || 'https://api.floob.co.kr/api';
 
 app.get('/apple-app-site-association', (req, res) => {
     res.json({
@@ -30,7 +31,7 @@ app.get('/meal/:mealId', (req, res) => {
         'utf8'
     );
 
-    fetch('https://floob-api.azurewebsites.net/api/meal', {
+    return fetch(`${API_BASE_URL}/meal`, {
         method: 'POST',
         headers: {
             'content-type': 'application/json',
@@ -54,7 +55,20 @@ app.get('/meal/:mealId', (req, res) => {
             }`,
         }),
     })
-        .then((res) => res.json())
+        .then((res) => {
+            if (res.ok) {
+                return res.json();
+            } else {
+                return res.json().then((message) => {
+                    console.error(
+                        `Floob link error occured. ${res.status} - ${
+                            res.statusText
+                        }\n${JSON.stringify(message)}`
+                    );
+                    return null;
+                });
+            }
+        })
         .then((data) => {
             const DEFAULT_TITLE = 'Floob: 식사기록 인 라이프';
             const DEFAULT_DESCRIPTION =
@@ -67,31 +81,33 @@ app.get('/meal/:mealId', (req, res) => {
             let imageUrl = DEFAULT_IMAGE_URL;
 
             try {
-                const meal = data.data.getMeal;
+                if (data) {
+                    const meal = data.data.getMeal;
 
-                if (meal) {
-                    if (meal.owner && meal.owner.nickname) {
-                        description = `@${meal.owner.nickname}`;
-                    }
+                    if (meal) {
+                        if (meal.owner && meal.owner.nickname) {
+                            description = `@${meal.owner.nickname}`;
+                        }
 
-                    if (meal.title) {
-                        description += ` ${meal.title}`;
-                    } else {
-                        description += ` ${convertShortenMealDateString(
-                            meal.mealedDate
-                        )}`;
-                    }
+                        if (meal.title) {
+                            description += ` ${meal.title}`;
+                        } else {
+                            description += ` ${convertShortenMealDateString(
+                                meal.mealedDate
+                            )}`;
+                        }
 
-                    if (
-                        Array.isArray(meal.files) &&
-                        meal.files.length > 0 &&
-                        (meal.files[0].type == 'image' ||
-                            meal.files[0].type == 'emoji')
-                    ) {
-                        imageUrl = meal.files[0].url;
-                    } else {
-                        imageUrl =
-                            'https://floob.blob.core.windows.net/image/floob_og.jpg';
+                        if (
+                            Array.isArray(meal.files) &&
+                            meal.files.length > 0 &&
+                            (meal.files[0].type == 'image' ||
+                                meal.files[0].type == 'emoji')
+                        ) {
+                            imageUrl = meal.files[0].url;
+                        } else {
+                            imageUrl =
+                                'https://floob.blob.core.windows.net/image/floob_og.jpg';
+                        }
                     }
                 }
 
@@ -106,7 +122,7 @@ app.get('/meal/:mealId', (req, res) => {
                     ogImage: imageUrl,
                 });
 
-                console.log('Link preview page html', html);
+                // console.log('Link preview page html', html);
 
                 res.send(html);
             } catch (err) {
