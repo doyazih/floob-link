@@ -1,7 +1,9 @@
 const fs = require('fs');
 const moment = require('moment');
 const path = require('path');
+const cheerio = require('cheerio');
 const fetch = require('node-fetch');
+const url = require('url');
 const Mustache = require('mustache');
 
 const express = require('express');
@@ -140,6 +142,56 @@ app.get('/meal/:mealId', (req, res) => {
                 });
                 res.send(html);
             }
+        });
+});
+
+app.post('/site-content', (req, res) => {
+    let result = {
+        isValid: false,
+    };
+
+    let siteUrl = req.body.url;
+
+    return fetch(siteUrl)
+        .then((res) => {
+            if (res.status === 200) {
+                result.isValid = true;
+                return res.text();
+            } else {
+                throw new Error('Response is not 200 OK.');
+            }
+        })
+        .then((body) => {
+            const $ = cheerio.load(body);
+
+            result.ogSiteName = $('meta[property="og:site_name"]').attr(
+                'content'
+            );
+            result.ogTitle = $('meta[property="og:title"]').attr('content');
+            result.ogDescription = $('meta[property="og:description"]').attr(
+                'content'
+            );
+            result.ogImage = $('meta[property="og:image"]').attr('content');
+            result.ogUrl = $('meta[property="og:url"]').attr('content');
+
+            result.iconUrl = $(
+                'link[rel="icon"], link[rel="shortcut icon"]'
+            ).attr('href');
+
+            if (result.siteIcon === '/favicon.ico') {
+                var parsedSiteUrl = url.parse(siteUrl);
+                result.iconUrl = `${parsedSiteUrl.protocol}//${parsedSiteUrl.host}/favicon.ico`;
+            }
+
+            return result;
+        })
+        .catch((err) => {
+            result.isValid = false;
+            result.error = err.message;
+            return result;
+        })
+        .then(() => {
+            res.send(result);
         });
 });
 
