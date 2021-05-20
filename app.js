@@ -7,8 +7,10 @@ const url = require('url');
 const Mustache = require('mustache');
 
 const express = require('express');
+const bodyParser = require('body-parser');
 
 const app = express();
+app.use(bodyParser.json());
 
 const port = process.env.PORT || 3000;
 const API_BASE_URL = process.env.API_BASE_URL || 'https://api.floob.co.kr/api';
