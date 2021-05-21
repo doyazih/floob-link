@@ -184,9 +184,9 @@ app.post('/site-content', (req, res) => {
                 'link[rel="icon"], link[rel="shortcut icon"]'
             ).attr('href');
 
-            if (result.siteIcon === '/favicon.ico') {
+            if (result.iconUrl[0] === '/') {
                 var parsedSiteUrl = url.parse(siteUrl);
-                result.iconUrl = `${parsedSiteUrl.protocol}//${parsedSiteUrl.host}/favicon.ico`;
+                result.iconUrl = `${parsedSiteUrl.protocol}//${parsedSiteUrl.host}${result.iconUrl}`;
             }
 
             return result;
