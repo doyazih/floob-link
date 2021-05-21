@@ -184,7 +184,11 @@ app.post('/site-content', (req, res) => {
                 'link[rel="icon"], link[rel="shortcut icon"]'
             ).attr('href');
 
-            if (result.iconUrl && result.iconUrl[0] === '/') {
+            if (
+                result.iconUrl &&
+                result.iconUrl.substr(0, 2) != '//' &&
+                result.iconUrl[0] === '/'
+            ) {
                 var parsedSiteUrl = url.parse(siteUrl);
                 result.iconUrl = `${parsedSiteUrl.protocol}//${parsedSiteUrl.host}${result.iconUrl}`;
             }
