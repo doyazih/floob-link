@@ -168,6 +168,8 @@ app.post('/site-content', (req, res) => {
         .then((body) => {
             const $ = cheerio.load(body);
 
+            result.title = $('title').text();
+
             result.ogSiteName = $('meta[property="og:site_name"]').attr(
                 'content'
             );
