@@ -158,7 +158,7 @@ app.post('/site-content', (req, res) => {
 
     return fetch(siteUrl)
         .then((res) => {
-            console.log(JSON.stringify(res.headers.raw(), null, 2));
+            // console.log(JSON.stringify(res.headers.raw(), null, 2));
             if (res.status === 200) {
                 result.isValid = true;
                 return res.text();
