@@ -171,6 +171,10 @@ app.post('/site-content', (req, res) => {
 
             result.title = $('title').text();
 
+            result.description = $('meta[property="description"]').attr(
+                'content'
+            );
+
             result.ogSiteName = $('meta[property="og:site_name"]').attr(
                 'content'
             );
