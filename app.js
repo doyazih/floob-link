@@ -5,6 +5,7 @@ const cheerio = require('cheerio');
 const fetch = require('node-fetch');
 const url = require('url');
 const Mustache = require('mustache');
+const config = require('config');
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -13,6 +14,10 @@ const cors = require('cors');
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
+
+const log4js = require('log4js');
+log4js.configure(config.loggers.log4js);
+const logger = log4js.getLogger();
 
 const port = process.env.PORT || 3000;
 const API_BASE_URL = process.env.API_BASE_URL || 'https://api.floob.co.kr/api';
@@ -76,6 +81,7 @@ app.get('/meal/:mealId', (req, res) => {
             }
         })
         .then((data) => {
+            logger.debug(req.path, data);
             const DEFAULT_TITLE = 'Floob: 식사기록 인 라이프';
             const DEFAULT_DESCRIPTION =
                 'Floob에서 나만의 가치있는 식사 생활을 기록하고 공유해보세요.';
@@ -128,7 +134,7 @@ app.get('/meal/:mealId', (req, res) => {
                     ogImage: imageUrl,
                 });
 
-                // console.log('Link preview page html', html);
+                logger.debug('Link preview page html', html);
 
                 res.send(html);
             } catch (err) {
@@ -167,6 +173,7 @@ app.post('/site-content', (req, res) => {
             }
         })
         .then((body) => {
+            logger.debug(req.path, siteUrl, body);
             const $ = cheerio.load(body);
 
             result.title = $('title').text();
@@ -209,7 +216,7 @@ app.post('/site-content', (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log(`Floob link app listening at http://localhost:${port}`);
+    logger.info(`Floob link app listening at http://localhost:${port}`);
 });
 
 const convertShortenMealDateString = (mealedDate) => {
