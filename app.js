@@ -176,6 +176,7 @@ app.post('/site-content', (req, res) => {
             logger.debug(req.path, siteUrl, body);
             const $ = cheerio.load(body);
 
+            result.url = siteUrl;
             result.title = $('title').text();
 
             result.description = $('meta[name="description"]').attr('content');
