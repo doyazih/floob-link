@@ -158,6 +158,7 @@ app.get('/meal/:mealId', (req, res) => {
 app.post('/site-content', (req, res) => {
     let result = {
         isValid: false,
+        url: req.body.url,
     };
 
     let siteUrl = req.body.url;
@@ -182,7 +183,6 @@ app.post('/site-content', (req, res) => {
             logger.debug(`${req.path} responsed.`, siteUrl, body);
             const $ = cheerio.load(body);
 
-            result.url = siteUrl;
             result.title = $('title').text();
 
             result.description = $('meta[name="description"]').attr('content');
