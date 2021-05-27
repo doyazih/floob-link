@@ -162,6 +162,8 @@ app.post('/site-content', (req, res) => {
 
     let siteUrl = req.body.url;
 
+    logger.debug(`${req.path} started.`, siteUrl);
+
     return fetch(siteUrl)
         .then((res) => {
             // console.log(JSON.stringify(res.headers.raw(), null, 2));
@@ -173,7 +175,7 @@ app.post('/site-content', (req, res) => {
             }
         })
         .then((body) => {
-            logger.debug(req.path, siteUrl, body);
+            logger.debug(`${req.path} responsed.`, siteUrl, body);
             const $ = cheerio.load(body);
 
             result.url = siteUrl;
@@ -207,6 +209,7 @@ app.post('/site-content', (req, res) => {
             return result;
         })
         .catch((err) => {
+            logger.error(`${req.path} error occured.`, err);
             result.isValid = false;
             result.error = err.message;
             return result;
