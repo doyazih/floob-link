@@ -171,7 +171,11 @@ app.post('/site-content', (req, res) => {
                 result.isValid = true;
                 return res.text();
             } else {
-                throw new Error('Response is not 200 OK.');
+                throw new Error(
+                    `Response status ${res.status} ${
+                        res.statusText
+                    }.\n${res.text()}`
+                );
             }
         })
         .then((body) => {
