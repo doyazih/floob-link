@@ -155,87 +155,30 @@ app.get('/meal/:mealId', (req, res) => {
         });
 });
 
+const getInstagramRequestCookie = () => {
+    return process.env.INSTAGRAM_COOKIE;
+};
+
 app.post('/site-content', (req, res) => {
     let result = {
         isValid: false,
         url: req.body.url,
+        headers: req.body.headers,
     };
 
     let siteUrl = req.body.url;
+    let requestHeaders = req.body.headers || null;
 
-    logger.debug(`${req.path} started.`, siteUrl);
-
-    return fetch(siteUrl)
-        .then((res) => {
-            // console.log(JSON.stringify(res.headers.raw(), null, 2));
-            if (res.status === 200) {
-                result.isValid = true;
-                return res.text();
-            } else {
-                throw new Error(
-                    `Response status ${res.status} ${
-                        res.statusText
-                    }.\n${res.text()}`
-                );
-            }
-        })
-        .then((body) => {
-            logger.debug(`${req.path} responsed.`, siteUrl, body);
-            const $ = cheerio.load(body);
-
-            result.title = $('title').text();
-
-            result.description = $('meta[name="description"]').attr('content');
-
-            result.ogSiteName = $('meta[property="og:site_name"]').attr(
-                'content'
-            );
-            result.ogTitle = $('meta[property="og:title"]').attr('content');
-            result.ogDescription = $('meta[property="og:description"]').attr(
-                'content'
-            );
-            result.ogImage = $('meta[property="og:image"]').attr('content');
-            result.ogUrl = $('meta[property="og:url"]').attr('content');
-
-            result.iconUrl = $(
-                'link[rel="icon"], link[rel="shortcut icon"]'
-            ).attr('href');
-
-            if (
-                result.iconUrl &&
-                result.iconUrl.substr(0, 2) != '//' &&
-                result.iconUrl[0] === '/'
-            ) {
-                var parsedSiteUrl = url.parse(siteUrl);
-                result.iconUrl = `${parsedSiteUrl.protocol}//${parsedSiteUrl.host}${result.iconUrl}`;
-            }
-
-            return result;
-        })
-        .catch((err) => {
-            logger.error(`${req.path} error occured.`, err);
-            result.isValid = false;
-            result.error = err.message;
-            return result;
-        })
-        .then(() => {
-            res.send(result);
-        });
-});
-
-app.post('/site-content/v2', (req, res) => {
-    let result = {
-        isValid: false,
-        url: req.body.url,
-    };
-
-    let siteUrl = req.body.url;
+    if (siteUrl.includes('instagram.com')) {
+        requestHeaders.cookie = getInstagramRequestCookie();
+        result.headers = requestHeaders;
+    }
 
     logger.debug(`${req.path} started.`, siteUrl);
 
     return fetch(siteUrl, {
         method: 'GET',
-        headers: req.body.headers,
+        headers: requestHeaders,
     })
         .then((res) => {
             // console.log(JSON.stringify(res.headers.raw(), null, 2));
