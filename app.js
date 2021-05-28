@@ -167,7 +167,7 @@ app.post('/site-content', (req, res) => {
     };
 
     let siteUrl = req.body.url;
-    let requestHeaders = req.body.headers || null;
+    let requestHeaders = req.body.headers || {};
 
     if (siteUrl.includes('instagram.com')) {
         requestHeaders.cookie = getInstagramRequestCookie();
