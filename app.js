@@ -155,6 +155,117 @@ app.get('/meal/:mealId', (req, res) => {
         });
 });
 
+app.get('/story/:userId', (req, res) => {
+    let template = fs.readFileSync(
+        path.join(__dirname, './template/story.html'),
+        'utf8'
+    );
+
+    return fetch(`${API_BASE_URL}/user`, {
+        method: 'POST',
+        headers: {
+            'content-type': 'application/json',
+            authorization: `Bearer ${process.env.ACCESS_TOKEN}`,
+        },
+        body: JSON.stringify({
+            query: `{
+                getUser (_id: "${req.params.userId}") {
+                    _id,
+                    nickname,
+                    name,
+                    introduction,
+                    profileImageUrl
+                }          
+            }`,
+        }),
+    })
+        .then((res) => {
+            if (res.ok) {
+                return res.json();
+            } else {
+                return res.json().then((message) => {
+                    console.error(
+                        `Floob link error occured. ${res.status} - ${
+                            res.statusText
+                        }\n${JSON.stringify(message)}`
+                    );
+                    return null;
+                });
+            }
+        })
+        .then((data) => {
+            logger.debug(req.path, data);
+            const DEFAULT_TITLE = 'Floob: 식사기록 인 라이프';
+            const DEFAULT_DESCRIPTION =
+                'Floob에서 나만의 가치있는 식사 생활을 기록하고 공유해보세요.';
+            const DEFAULT_IMAGE_URL =
+                'https://floob.blob.core.windows.net/image/floob_og.jpg';
+
+            let title = DEFAULT_TITLE;
+            let description = DEFAULT_DESCRIPTION;
+            let imageUrl = DEFAULT_IMAGE_URL;
+
+            try {
+                if (data) {
+                    const storyUser = data.data.getUser;
+
+                    if (storyUser) {
+                        if (storyUser.name) {
+                            title = `${storyUser.name}`;
+                            if (storyUser.nickname) {
+                                title += ` • @${storyUser.nickname}`;
+                            }
+                        } else {
+                            if (storyUser.nickname) {
+                                title = `@${storyUser.nickname}`;
+                            }
+                        }
+
+                        if (storyUser.introduction) {
+                            description = storyUser.introduction;
+                        }
+
+                        if (storyUser.profileImageUrl) {
+                            imageUrl = storyUser.profileImageUrl;
+                        } else {
+                            imageUrl =
+                                'https://floob.blob.core.windows.net/image/floob_og.jpg';
+                        }
+                    }
+                }
+
+                let html = Mustache.render(template, {
+                    userId: req.params.userId,
+                    url: `https://floob.co.kr/story/${req.params.userId}`,
+                    linkUrl: `https://link.floob.co.kr/story/${req.params.userId}`,
+                    title: title,
+                    description: description,
+                    ogTitle: title,
+                    ogDescription: description,
+                    ogImage: imageUrl,
+                });
+
+                logger.debug('Link preview page html', html);
+
+                res.send(html);
+            } catch (err) {
+                console.error('link html error', err);
+
+                let html = Mustache.render(template, {
+                    userId: req.params.userId,
+                    url: `https://floob.co.kr/story/${req.params.userId}`,
+                    linkUrl: `https://link.floob.co.kr/story/${req.params.userId}`,
+                    title: DEFAULT_TITLE,
+                    description: DEFAULT_DESCRIPTION,
+                    ogTitle: DEFAULT_TITLE,
+                    ogDescription: DEFAULT_DESCRIPTION,
+                    ogImage: DEFAULT_IMAGE_URL,
+                });
+                res.send(html);
+            }
+        });
+});
+
 const getInstagramRequestCookie = () => {
     return process.env.INSTAGRAM_COOKIE;
 };

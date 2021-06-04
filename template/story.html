@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+        <meta
+            http-equiv="Cache-Control"
+            content="no-cache, no-store, must-revalidate"
+        />
+
+        <meta http-equiv="Pragma" content="no-cache" />
+        <meta http-equiv="Expires" content="0" />
+
+        <meta
+            name="viewport"
+            content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"
+        />
+
+        <title>{{ title }}</title>
+        <meta name="title" content="{{ title }}" />
+        <meta name="description" content="{{ description }}" />
+        <meta
+            name="keywords"
+            content="훌룹, floob, 식사기록, 식사일기, 식단기록, 식단관리, 음식기록, 식사기록앱, 식단관리앱"
+        />
+
+        <meta property="og:title" content="{{ ogTitle }}" />
+        <meta property="og:description" content="{{ ogDescription }}" />
+        <meta property="og:image" content="{{ ogImage }}" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="{{ linkUrl }}" />
+
+        <meta name="twitter:title" content="{{ ogTitle }}" />
+        <meta name="twitter:description" content="{{ ogDescription }}" />
+        <meta name="twitter:image" content="{{ ogImage }}" />
+        <meta name="twitter:card" content="{{ ogDescription }}" />
+
+        <link rel="icon" href="https://floob.co.kr/favicon.ico" />
+    </head>
+    <body onload="link()">
+        <script>
+            function link() {
+                location.href = 'https://floob.co.kr/story/{{ userId }}';
+            }
+        </script>
+    </body>
+</html>
