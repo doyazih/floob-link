@@ -295,7 +295,7 @@ app.post('/site-content', (req, res) => {
             // console.log(JSON.stringify(res.headers.raw(), null, 2));
             if (res.status === 200) {
                 result.isValid = true;
-                return res.text();
+                return res.textConverted();
             } else {
                 throw new Error(
                     `Response status ${res.status} ${

@@ -1,6 +1,6 @@
 {
     "name": "floob-link",
-    "version": "1.4.0",
+    "version": "1.4.1",
     "description": "",
     "main": "app.js",
     "scripts": {
@@ -11,6 +11,7 @@
         "cheerio": "^1.0.0-rc.9",
         "config": "^3.3.6",
         "cors": "^2.8.5",
+        "encoding": "^0.1.13",
         "express": "^4.17.1",
         "log4js": "^6.3.0",
         "moment": "^2.29.1",
