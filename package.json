@@ -1,12 +1,13 @@
 {
     "name": "floob-link",
-    "version": "1.4.1",
+    "version": "1.4.2",
     "description": "",
     "main": "app.js",
     "scripts": {
         "start": "node app.js"
     },
     "dependencies": {
+        "applicationinsights": "^2.1.1",
         "body-parser": "^1.19.0",
         "cheerio": "^1.0.0-rc.9",
         "config": "^3.3.6",

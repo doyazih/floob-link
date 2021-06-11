@@ -1,3 +1,6 @@
+let appInsights = require('applicationinsights');
+appInsights.setup().start();
+
 const fs = require('fs');
 const moment = require('moment');
 const path = require('path');
