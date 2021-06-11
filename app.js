@@ -1,5 +1,9 @@
 let appInsights = require('applicationinsights');
 appInsights.setup().start();
+appInsights.defaultClient.addTelemetryProcessor((envelope) => {
+    envelope.tags['ai.cloud.role'] = 'link';
+    envelope.tags['ai.cloud.roleInstance'] = 'floob-link';
+});
 
 const fs = require('fs');
 const moment = require('moment');
