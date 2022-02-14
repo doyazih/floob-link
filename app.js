@@ -1,3 +1,5 @@
+const VERSION = require('./package.json').version;
+
 let appInsights = require('applicationinsights');
 appInsights.setup().start();
 appInsights.defaultClient.addTelemetryProcessor((envelope) => {
@@ -285,7 +287,9 @@ app.post('/site-content', (req, res) => {
     };
 
     let siteUrl = req.body.url;
-    let requestHeaders = req.body.headers || {};
+    let requestHeaders = {
+        'user-agent': `FloobLink/${VERSION}`,
+    };
 
     if (siteUrl.includes('instagram.com')) {
         requestHeaders.cookie = getInstagramRequestCookie();
@@ -305,9 +309,7 @@ app.post('/site-content', (req, res) => {
                 return res.textConverted();
             } else {
                 throw new Error(
-                    `Response status ${res.status} ${
-                        res.statusText
-                    }.\n${res.text()}`
+                    `Response status ${res.status} ${res.statusText}.`
                 );
             }
         })
@@ -345,7 +347,7 @@ app.post('/site-content', (req, res) => {
             return result;
         })
         .catch((err) => {
-            logger.error(`${req.path} error occured.`, err);
+            logger.error(`${req.path} error occured. - ${siteUrl}`, err);
             result.isValid = false;
             result.error = err.message;
             return result;
